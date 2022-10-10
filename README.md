@@ -1,5 +1,3 @@
-# container-deployment-scripts
-
 # Simple CIS Container Deployment
 The download contains two files.
 - `deploy.bat` (Windows)
