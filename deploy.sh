@@ -5,7 +5,6 @@
 # Flags
 #       -h = Help
 #       -m = Module Code
-#       -y = Year
 
 # Author : Dan Campbell
 ##################################################################
@@ -13,8 +12,8 @@ while getopts hm: flag
 do
     case "${flag}" in
         h)  echo "deploy-cis-containers."
-            echo "Usage    :    ./deploy-cis-container.sh -m <modulecode> -y <year>"
-            echo "Example  :    ./deploy-cis-container.sh -m 2152 -y 22"
+            echo "Usage    :    ./deploy-cis-container.sh -m <modulecode>"
+            echo "Example  :    ./deploy-cis-container.sh -m 2152"
             echo
             echo "Syntax   :  [-h|m]"
             echo "options  :"
@@ -31,6 +30,8 @@ do
          exit;
     esac
 done
+
+year=22
 
 # Checks for values!
 if [ -z "$year" ] ; then
