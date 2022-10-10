@@ -24,6 +24,6 @@ The download contains two files.
 
 5. Now we are ready to run the script.
     - **Windows** : `deploy.bat <module-code>`
-    - **Unix (Mac and Linux)** : `deploy.sh <module-code>`
+    - **Unix (Mac and Linux)** : `./deploy.sh -m <module-code>`
 
 6. This will proceed to launch the container. 
