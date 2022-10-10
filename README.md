@@ -3,6 +3,9 @@ The download contains two files.
 - `deploy.bat` (Windows)
 - `deploy.sh` (Unix : Mac and Linux)
 
+## Requirements
+- Docker Desktop - this will also have to be running on the machine.
+
 ## Instructions
 
 1. Selected the correct script above that is compatible with your operating system.
