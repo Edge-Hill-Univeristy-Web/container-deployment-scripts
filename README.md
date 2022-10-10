@@ -17,8 +17,10 @@ The download contains two files.
     cd /OneDrive/Year2/
     ```
 
-4. Now we are ready to run the script.
+4. Place appropriate script into the directory you chose during the step above.
+
+5. Now we are ready to run the script.
     - **Windows** : `deploy.bat <module-code>`
     - **Unix (Mac and Linux)** : `deploy.sh <module-code>`
 
-5. This will proceed to launch the container. 
+6. This will proceed to launch the container. 
