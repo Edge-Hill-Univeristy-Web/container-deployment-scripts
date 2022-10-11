@@ -67,7 +67,6 @@ fi
 
 # Creates .env based on flags
 cat <<EOT >> .env
-COMPOSE_PROJECT_NAME=EHU_Containers
 MODULE_CODE="$modulecode"
 YEAR="$year"
 EOT
