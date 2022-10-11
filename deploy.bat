@@ -37,8 +37,7 @@ cd cis-docker
 echo [INFO] Creating environment variable file
  
 @echo off
-echo COMPOSE_PROJECT_NAME=EHU_Containers > ".env"
-echo MODULE_CODE=%module% >> ".env"
+echo MODULE_CODE=%module% > ".env"
 echo YEAR=%year% >> ".env"
  
 echo [INFO] created .env
