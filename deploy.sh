@@ -3,12 +3,13 @@
 # This script will deploy the EHU CIS docker containers 
 
 # Flags
-#       -h = Help
-#       -m = Module Code
+#       -h = Displays Help
+#       -m = This will build and deploy the container for the module specified.
+#       -s = This will start a container for the module specified.
 
 # Author : Dan Campbell
 ##################################################################
-while getopts hm: flag
+while getopts hm:s: flag
 do
     case "${flag}" in
         h)  echo "deploy-cis-containers."
@@ -23,10 +24,14 @@ do
             echo "The following flags are required for the script to function"
             echo "-m     Module code [example 2152]"
             exit;;
+        s)  containername=${OPTARG}
+        echo "[INFO] Starting the $containername Container"
+            docker container start CIS$containername
+            exit;;
         m) modulecode=${OPTARG};;
         y) year=22;;
         \?) # incorrect option
-         echo "Error: Invalid option"
+         echo "[Error] Invalid option"
          exit;
     esac
 done
@@ -67,12 +72,12 @@ fi
 
 # Creates .env based on flags
 cat <<EOT >> .env
+COMPOSE_PROJECT_NAME=EHU_Containers
 MODULE_CODE="$modulecode"
 YEAR="$year"
 EOT
 
 echo "[INFO] Created environment variables"
 echo "[INFO] Deploying CIS$modulecode Container"
-echo
 
 docker-compose up -d
