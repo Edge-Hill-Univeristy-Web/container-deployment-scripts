@@ -4,12 +4,11 @@
 
 # Flags
 #       -h = Displays Help
-#       -m = This will build and deploy the container for the module specified.
-#       -s = This will start a container for the module specified.
+#       -m = This will build & deploy or deploy a container if exists for the module specified.
 
 # Author : Dan Campbell
 ##################################################################
-while getopts hm:s: flag
+while getopts hm: flag
 do
     case "${flag}" in
         h)  echo "deploy-cis-containers."
@@ -24,12 +23,7 @@ do
             echo "The following flags are required for the script to function"
             echo "-m     Module code [example 2152]"
             exit;;
-        s)  containername=${OPTARG}
-        echo "[INFO] Starting the $containername Container"
-            docker container start CIS$containername
-            exit;;
         m) modulecode=${OPTARG};;
-        y) year=22;;
         \?) # incorrect option
          echo "[Error] Invalid option"
          exit;
@@ -37,11 +31,6 @@ do
 done
 
 year=22
-
-# Checks for values!
-if [ -z "$year" ] ; then
-    echo "[ERROR] please specify a value for YEAR using the -y flag"
-fi
 
 if [ -z "$modulecode" ] ; then
     echo "[ERROR] please specify a value for MODULECODE using the -m flag"
@@ -51,33 +40,42 @@ if [ -z "$modulecode" ] || [ -z "$year" ] ; then
     exit;
 fi
 
-echo "[INFO] Beginning Deployment of "$modulecode""
+echo "[INFO] Starting EHU CIS Container Deployment...."
 
-FILE="EHU-CIS-Docker/docker-compose.yml"
+FILE="./CIS${modulecode}/docker-compose.yml"
 
 # Check if docker-compose.yml exists
 if [ -f "$FILE" ]; then
-    echo "[INFO] $FILE exists. Proceeding to deploy"
+    echo "[INFO] A docker-compose file exists for CIS${modulecode}. Proceeding to deploy..."
+    cd ./CIS${modulecode}
+    docker container start CIS${modulecode}
+   
+    DOCKER_OUTPUT="$(docker container start CIS${modulecode} 2>&1 > /dev/null)"
+   
+    if [[ $DOCKER_OUTPUT == *"No such container: CIS${modulecode}"* ]]; then
+        echo "[INFO] A Container for CIS${modulecode} does not exist on the system. Attempting to Deploying"
+        docker-compose up -d
+    fi
+    exit;
 else 
-    echo "[INFO] $FILE does not exist. Proceeding to download..."
-    git clone https://github.com/Edge-Hill-Univeristy-Web/EHU-CIS-Docker.git
+    echo "[INFO] A docker-compose file does not exists for CIS${modulecode}. Proceeding to create..."
+    mkdir ./CIS${modulecode}
+    cd ./CIS${modulecode}
+    cat <<EOF >> .env
+COMPOSE_PROJECT_NAME=EHU_CIS_Containers
+EOF
+
+    cat <<EOF >> docker-compose.yml
+version: '3.9'
+services:
+    ehu-cis${modulecode}-container:
+        container_name: CIS${modulecode}
+        ports:
+            - '${modulecode}:8888'
+        volumes:
+            - ./CIS${modulecode}:/home/ehu/CIS${modulecode}-${YEAR}
+        image: walshd/ehucis${modulecode}
+EOF
+    echo "[INFO] Building and Deploying CIS$modulecode Container"
+    docker-compose up -d
 fi
-
-cd EHU-CIS-Docker
-
-if [ -f ".env" ] ; then
-    echo "[INFO] .env file already exists. Proceeding to remove"
-    rm .env
-fi
-
-# Creates .env based on flags
-cat <<EOT >> .env
-COMPOSE_PROJECT_NAME=EHU_Containers
-MODULE_CODE="$modulecode"
-YEAR="$year"
-EOT
-
-echo "[INFO] Created environment variables"
-echo "[INFO] Deploying CIS$modulecode Container"
-
-docker-compose up -d
